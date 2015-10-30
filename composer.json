@@ -1,0 +1,26 @@
+{
+    "name": "kalyabin/yii2-git",
+    "description": "Yii2 extension to view and to control GIT repositories",
+    "type": "extension",
+    "license": "BSD-3-Clause",
+    "version": "dev-master",
+    "reference": "68314a9eccc7a1983cb6d1f502754072",
+    "keywords": [
+        "yii2", "extension", "git", "repository"
+    ],
+    "authors": [
+        {
+            "name": "Max Kalyabin",
+            "email": "maksim@kalyabin.ru"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "kalyabin\\git\\": ""
+        }
+    }
+}
