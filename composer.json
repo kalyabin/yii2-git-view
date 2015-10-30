@@ -4,7 +4,7 @@
     "type": "extension",
     "license": "BSD-3-Clause",
     "version": "dev-master",
-    "reference": "68314a9eccc7a1983cb6d1f502754072",
+    "reference": "ac192f0e7415bf055680527052c690db",
     "keywords": [
         "yii2", "extension", "git", "repository"
     ],
@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "kalyabin\\git\\": ""
+            "gitView\\": ""
         }
     }
 }

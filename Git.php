@@ -1,8 +1,8 @@
 <?php
-namespace kalyabin\git;
+namespace gitView;
 
-use kalyabin\git\exception\CommonException;
-use kalyabin\git\exception\RepositoryException;
+use exception\CommonException;
+use exception\RepositoryException;
 use yii\base\Object;
 
 /**

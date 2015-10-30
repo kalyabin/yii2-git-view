@@ -1,5 +1,5 @@
 <?php
-namespace kalyabin\git\exception;
+namespace gitView\exception;
 
 /**
  * Repository exception class
