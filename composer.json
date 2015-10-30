@@ -1,5 +1,5 @@
 {
-    "name": "kalyabin/yii2-git",
+    "name": "kalyabin/yii2-git-view",
     "description": "Yii2 extension to view and to control GIT repositories",
     "type": "extension",
     "license": "BSD-3-Clause",
