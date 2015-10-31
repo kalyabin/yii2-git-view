@@ -42,8 +42,8 @@ class Repository extends Object
      */
     public function __construct($dir, Git $git)
     {
-        $projectPath = FileHelper::normalizePath($dir);
-        $gitPath = FileHelper::normalizePath($projectPath . DIRECTORY_SEPARATOR . self::GIT_PATH);
+        $projectPath = FileHelper::normalizePath(realpath($dir));
+        $gitPath = FileHelper::normalizePath($projectPath . '/' . self::GIT_PATH);
         if (!is_dir($gitPath)) {
             throw new RepositoryException('Repository not found at ' . $dir);
         }
@@ -65,6 +65,16 @@ class Repository extends Object
     }
 
     /**
+     * Returns project path
+     *
+     * @return string
+     */
+    public function getProjectPath()
+    {
+        return $this->projectPath;
+    }
+
+    /**
      * Check repository status and returns it.
      *
      * @return string
@@ -78,5 +88,49 @@ class Repository extends Object
             throw new RepositoryException("Can't get repository status", $ex->getCode(), $ex);
         }
         return $result;
+    }
+
+    /**
+     * Returns repository files list.
+     * Param $subDir must be a subdirectory of project repository.
+     *
+     * @param string $subDir
+     * @return \gitView\File[]
+     * @throws RepositoryException
+     */
+    public function getFilesList($subDir = null)
+    {
+        $list = [];
+
+        $dir = FileHelper::normalizePath(realpath($this->projectPath . '/' . $subDir));
+
+        if (!is_dir($dir) || $dir == $this->gitPath) {
+            throw new RepositoryException("Path $dir is not a directory");
+        }
+
+        $iterator = new \DirectoryIterator($dir);
+        foreach ($iterator as $path) {
+            try {
+                $file = null;
+                if (
+                    ($path->isDir() && !$path->isDot() && $path->getFilename() != self::GIT_PATH) ||
+                    ($path->isDot() && $path->getFilename() != '.')
+                ) {
+                    $file = new Directory($path, $this);
+                }
+                else if ($path->isFile()) {
+                    $file = new File($path, $this);
+                }
+                else if ($path->isLink()) {
+                    $file = new FileLink($path, $this);
+                }
+                if ($file instanceof File) {
+                    $list[] = $file;
+                }
+            }
+            catch (RepositoryException $ex) { }
+        }
+
+        return $list;
     }
 }
