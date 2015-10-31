@@ -1,8 +1,8 @@
 <?php
 namespace gitView;
 
-use exception\CommonException;
-use exception\RepositoryException;
+use gitView\exception\CommonException;
+use gitView\exception\RepositoryException;
 use yii\base\Object;
 
 /**
