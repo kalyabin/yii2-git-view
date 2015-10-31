@@ -1,6 +1,7 @@
 <?php
 namespace gitView;
 
+use DirectoryIterator;
 use gitView\exception\CommonException;
 use gitView\exception\RepositoryException;
 use yii\base\Object;
@@ -95,7 +96,7 @@ class Repository extends Object
      * Param $subDir must be a subdirectory of project repository.
      *
      * @param string $subDir
-     * @return \gitView\File[]
+     * @return File[]
      * @throws RepositoryException
      */
     public function getFilesList($subDir = null)
@@ -108,7 +109,7 @@ class Repository extends Object
             throw new RepositoryException("Path $dir is not a directory");
         }
 
-        $iterator = new \DirectoryIterator($dir);
+        $iterator = new DirectoryIterator($dir);
         foreach ($iterator as $path) {
             try {
                 $file = null;
