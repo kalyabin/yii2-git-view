@@ -4,7 +4,7 @@
     "type": "extension",
     "license": "BSD-3-Clause",
     "version": "dev-master",
-    "reference": "c69abeb2ba80bf290315ba913b100f57",
+    "reference": "d6814165db8839ecbfed983e82268530",
     "keywords": [
         "yii2", "extension", "git", "repository"
     ],
@@ -18,7 +18,7 @@
     "require": {
         "php": ">=5.4.0",
         "yiisoft/yii2": "2.*",
-        "kalyabin/yii2-vcs-common": "dev-master"
+        "kalyabin/yii2-vcs-common": "*"
     },
     "autoload": {
         "psr-4": {
