@@ -4,7 +4,7 @@
     "type": "extension",
     "license": "BSD-3-Clause",
     "version": "dev-master",
-    "reference": "d6814165db8839ecbfed983e82268530",
+    "reference": "e652e7e87ccef2616562c96096ac2e03",
     "keywords": [
         "yii2", "extension", "git", "repository"
     ],
@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "gitView\\": ""
+            "GitView\\": ""
         }
     }
 }

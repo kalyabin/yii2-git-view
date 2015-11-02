@@ -1,9 +1,9 @@
 <?php
-namespace gitView;
+namespace GitView;
 
-use vcsCommon\BaseRepository;
-use vcsCommon\exception\CommonException;
-use vcsCommon\exception\RepositoryException;
+use VcsCommon\BaseRepository;
+use VcsCommon\exception\CommonException;
+use VcsCommon\exception\RepositoryException;
 
 /**
  * Repository class

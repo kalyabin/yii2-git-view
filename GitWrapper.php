@@ -1,9 +1,9 @@
 <?php
-namespace gitView;
+namespace GitView;
 
-use vcsCommon\BaseWrapper;
-use vcsCommon\exception\CommonException;
-use vcsCommon\exception\RepositoryException;
+use VcsCommon\BaseWrapper;
+use VcsCommon\exception\CommonException;
+use VcsCommon\exception\RepositoryException;
 
 /**
  * This class provides access to git console command and implements common methods.
