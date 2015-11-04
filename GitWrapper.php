@@ -3,7 +3,6 @@ namespace GitView;
 
 use VcsCommon\BaseWrapper;
 use VcsCommon\exception\CommonException;
-use VcsCommon\exception\RepositoryException;
 
 /**
  * This class provides access to git console command and implements common methods.
@@ -47,7 +46,7 @@ class GitWrapper extends BaseWrapper
      *
      * @param string $dir project directory
      * @return Repository
-     * @throws RepositoryException
+     * @throws CommonException
      */
     public function getRepository($dir)
     {
