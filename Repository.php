@@ -11,6 +11,31 @@ use VcsCommon\exception\CommonException;
 class Repository extends BaseRepository
 {
     /**
+     * @var GitWrapper common GIT interface
+     */
+    protected $wrapper;
+
+    /**
+     * Defines a commit diff command
+     */
+    const DIFF_COMMIT = 'commit';
+
+    /**
+     * Defines a compare diff command
+     */
+    const DIFF_COMPARE = 'compare';
+
+    /**
+     * Defines a path diff command
+     */
+    const DIFF_PATH = 'path';
+
+    /**
+     * Defines a full repository diff command
+     */
+    const DIFF_REPOSITORY = 'repository';
+
+    /**
      * Check repository status and returns it.
      *
      * @return string
@@ -57,7 +82,7 @@ class Repository extends BaseRepository
     /**
      * Returns commit object by commit id.
      *
-     * @return BaseCommit
+     * @return Commit
      * @throws CommonException
      */
     public function getCommit($id)
@@ -75,5 +100,71 @@ class Repository extends BaseRepository
             'date' => $date,
             'message' => $message,
         ]);
+    }
+
+    /**
+     * Returns diff by specific command line params.
+     *
+     * Can receive everybody params for command line like this:
+     *
+     * ```php
+     * $wrapper = new GitWrapper();
+     * $repo = $wrapper->getRepository('/path/to/repository');
+     *
+     * // get commit diff:
+     * print_r($repo->getDiff('commit', '<commit_sha1>'));
+     *
+     * // get commit compare
+     * print_r($repo->getDiff('compare', '<commit_sha1_first_commit>', '<commit_sha1_last_commit>');
+     *
+     * // get file diff
+     * print_r($repo->getDiff('file', '/path/to/file');
+     *
+     * // get file diff by specific commit
+     * print_r($repo->getDiff('file', '/path/to/file', '<sha1>');
+     *
+     * // get full repo diff
+     * print_r($repo->getDiff('repository');
+     * ```
+     *
+     * @see \kalyabin\VcsCommon\BaseRepository::getDiff()
+     * @return string[]
+     * @throws CommonException
+     */
+    public function getDiff()
+    {
+        $command = ['diff'];
+
+        $type = func_num_args() >= 1 ? func_get_arg(0) : null;
+        $arg1 = func_num_args() >= 2 ? func_get_arg(1) : null;
+        $arg2 = func_num_args() >= 3 ? func_get_arg(2) : null;
+
+        if ($type == self::DIFF_COMMIT && $this->wrapper->checkIsSha1($arg1)) {
+            // commit diff command requires second param a commit sha1
+            $command[] = $arg1;
+        }
+        else if ($type == self::DIFF_COMPARE && $this->wrapper->checkIsSha1($arg1) && $this->wrapper->checkIsSha1($arg2)) {
+            // commits compare requires second param a commit sha1 and third param too
+            $command[] = $arg1 . '..' . $arg2;
+        }
+        else if ($type == self::DIFF_PATH && is_string($arg1)) {
+            // path diff requires second param like a string
+            // if this is not a valid path - GitWrapper throws CommonException
+            if (is_string($arg2) && $this->wrapper->checkIsSha1($arg2)) {
+                // specific file commit
+                $command[] = $arg2;
+            }
+            $command[] = $arg1;
+        }
+        else if ($type == self::DIFF_REPOSITORY) {
+            // full repo diff
+            $command[] = '.';
+        }
+        else {
+            // nobody
+            throw new CommonException('Type a valid command');
+        }
+
+        return $this->wrapper->execute($command, $this->projectPath, true);
     }
 }

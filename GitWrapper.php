@@ -52,4 +52,15 @@ class GitWrapper extends BaseWrapper
     {
         return new Repository($dir, $this);
     }
+
+    /**
+     * Return true if param is valid sha1 identifier.
+     *
+     * @param string $str
+     * @return boolean
+     */
+    public function checkIsSha1($str)
+    {
+        return is_string($str) && preg_match('#^[a-f|A-F|0-9]+$#i', $str);
+    }
 }
