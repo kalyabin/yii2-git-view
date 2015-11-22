@@ -3,6 +3,7 @@ namespace GitView;
 
 use VcsCommon\BaseRepository;
 use VcsCommon\exception\CommonException;
+use VcsCommon\Graph;
 
 /**
  * Repository class
@@ -10,7 +11,7 @@ use VcsCommon\exception\CommonException;
  */
 class Repository extends BaseRepository
 {
-    const LOG_FORMAT = "'%H%n%an%n%ae%n%ad%n%f%n'";
+    const LOG_FORMAT = "%H%n%an%n%ae%n%ad%n%f%n";
 
     /**
      * @var GitWrapper common GIT interface
@@ -90,7 +91,7 @@ class Repository extends BaseRepository
     public function getCommit($id)
     {
         $result = $this->wrapper->execute([
-            'show', $id, '--pretty=format:' . self::LOG_FORMAT
+            'show', $id, '--pretty=format:\'' . self::LOG_FORMAT . '\''
         ], $this->projectPath, true);
         list ($id, $contributorName, $contributorEmail, $date, $message) = $result;
         return new Commit($this, [
@@ -176,7 +177,7 @@ class Repository extends BaseRepository
         $ret = [];
 
         $result = $this->wrapper->execute([
-            'log', '--pretty=format:' . self::LOG_FORMAT,
+            'log', '--pretty=format:\'' . self::LOG_FORMAT . '\'',
             '-n', (int) $limit, '--skip' => (int) $skip
         ], $this->projectPath, true);
 
@@ -194,6 +195,85 @@ class Repository extends BaseRepository
                     'date' => $date,
                     'message' => $message,
                 ]);
+            }
+        }
+
+        return $ret;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getGraphHistory($limit, $skip)
+    {
+        /* @var $ret Graph */
+        $ret = [];
+
+        $result = $this->wrapper->execute([
+            'log', '--graph', '--format' => "format:'{delim}%n" . self::LOG_FORMAT . "'",
+            '-n', (int) $limit, '--skip' => (int) $skip,
+        ], $this->projectPath, true);
+
+        // commit description pieces
+        $commitPieces = [];
+        // skip chars count for commit description parsing
+        $commitSkipChars = 0;
+
+        // parse each rows
+        foreach ($result as $row) {
+            if (!trim($row)) {
+                continue;
+            }
+            if ($commitSkipChars) {
+                // this row is a commit description piece
+                $commitDescription = substr($row, $commitSkipChars);
+                if (trim($commitDescription)) {
+                    $commitPieces[] = $commitDescription;
+                }
+                else {
+                    // last row of commit description
+                    list ($id, $contributorName, $contributorEmail, $date, $message) = $commitPieces;
+                    // append commit to last graph item
+                    $ret[count($ret) - 1]->setCommit(new Commit($this, [
+                        'id' => $id,
+                        'contributorName' => $contributorName,
+                        'contributorEmail' => $contributorEmail,
+                        'date' => $date,
+                        'message' => $message,
+                    ]));
+                    $commitPieces = [];
+                    $commitSkipChars = 0;
+                }
+            }
+            else {
+                // explode row by {delim} to detect start of commit description
+                $pieces = explode('{delim}', $row);
+                if (isset($pieces[1])) {
+                    // this row is a start of commit description
+                    $commitSkipChars = strlen($pieces[0]);
+                }
+                $row = $pieces[0];
+                $item = new Graph();
+                // parse row chars
+                for ($x = 0; $x <= strlen($row); $x++) {
+                    $char = substr($row, $x, 1);
+                    if ($char == '\\') {
+                        $item->appendPiece(Graph::LEFT);
+                    }
+                    else if ($char == '/') {
+                        $item->appendPiece(Graph::RIGHT);
+                    }
+                    else if ($char == '*') {
+                        $item->appendPiece(Graph::COMMIT);
+                    }
+                    else if ($char == '|') {
+                        $item->appendPiece(Graph::DIRECT);
+                    }
+                    else {
+                        $item->appendPiece(Graph::SPACE);
+                    }
+                }
+                $ret[] = $item;
             }
         }
 
