@@ -10,14 +10,12 @@ use yii\helpers\StringHelper;
 class Diff extends BaseDiff
 {
     /**
-     * Sets public properties from command line using string variable.
-     *
-     * @param string[] $str
+     * @inheritdoc
      */
-    public function setResults($str)
+    protected function initialize($rows)
     {
         $diffId = null;
-        foreach ($str as $n => $row) {
+        foreach ($rows as $n => $row) {
             if ($n >= 0 && $n <= 3) {
                 // first 3 lines are description
                 if (trim($this->description)) {

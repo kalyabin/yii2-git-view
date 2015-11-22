@@ -31,9 +31,7 @@ class Commit extends BaseCommit
 
         $appendFileDiff = function() use (&$previewFile, &$ret) {
             if (!empty($previewFile)) {
-                $diff = new Diff();
-                $diff->setResults($previewFile);
-                $ret[] = $diff;
+                $ret[] = new Diff($previewFile);
                 $previewFile = [];
             }
         };
