@@ -133,7 +133,7 @@ class Repository extends BaseRepository
      */
     public function getDiff()
     {
-        $command = ['diff'];
+        $command = ['show', "--format=''"];
 
         $type = func_num_args() >= 1 ? func_get_arg(0) : null;
         $arg1 = func_num_args() >= 2 ? func_get_arg(1) : null;

@@ -44,36 +44,23 @@ class Diff extends BaseDiff
             }
             else if (StringHelper::startsWith($row, '@@')) {
                 // new diff line
-                $this->newLines[$row] = [];
-                $this->previousLines[$row] = [];
+                $diffId = $row;
+
                 $matches = [];
                 $pattern = '#^@@[\s]\-([\d]+),?([\d]+)?[\s]\+([\d]+),?([\d]+)?[\s]@@#i';
                 preg_match($pattern, $row, $matches);
 
-                $lineANum = isset($matches[1]) ? (int) $matches[1] : 1;
-                $lineBNum = isset($matches[3]) ? (int) $matches[3] : 1;
-
-                $diffId = $row;
+                $this->lines[$diffId] = [
+                    'beginA' => isset($matches[1]) ? (int) $matches[1] : 1,
+                    'beginB' => isset($matches[3]) ? (int) $matches[3] : 1,
+                    'cntA' => isset($matches[2]) ? (int) $matches[2] : 0,
+                    'cntB' => isset($matches[4]) ? (int) $matches[4] : 0,
+                    'lines' => [],
+                ];
             }
-            else if (StringHelper::startsWith($row, ' ')) {
-                // a and b line version
-                $lineANum++;
-                $lineBNum++;
-
-                $this->previousLines[$diffId][$lineANum] = substr($row, 1);
-                $this->newLines[$diffId][$lineBNum] = substr($row, 1);
-            }
-            else if (StringHelper::startsWith($row, '+')) {
-                // b line version
-                $lineBNum++;
-
-                $this->newLines[$diffId][$lineBNum] = substr($row, 1);
-            }
-            else if (StringHelper::startsWith($row, '-')) {
-                // a line version
-                $lineANum++;
-
-                $this->previousLines[$diffId][$lineANum] = substr($row, 1);
+            else if ($diffId && isset($this->lines[$diffId])) {
+                // changed row
+                $this->lines[$diffId]['lines'][] = $row;
             }
         }
     }

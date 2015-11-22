@@ -34,7 +34,6 @@ class Commit extends BaseCommit
                 $diff = new Diff();
                 $diff->setResults($previewFile);
                 $ret[] = $diff;
-                print_r($diff);
                 $previewFile = [];
             }
         };
