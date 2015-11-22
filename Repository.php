@@ -203,6 +203,7 @@ class Repository extends BaseRepository
 
     /**
      * @inheritdoc
+     * @todo now for each graph item runs git show command - this not powerful
      */
     public function getGraphHistory($limit, $skip)
     {
@@ -210,7 +211,7 @@ class Repository extends BaseRepository
         $ret = [];
 
         $result = $this->wrapper->execute([
-            'log', '--graph', '--format' => "format:'{delim}%n" . self::LOG_FORMAT . "'",
+            'log', '--graph', '--format' => "format:'{delim}%H'",
             '-n', (int) $limit, '--skip' => (int) $skip,
         ], $this->projectPath, true);
 
@@ -224,57 +225,34 @@ class Repository extends BaseRepository
             if (!trim($row)) {
                 continue;
             }
-            if ($commitSkipChars) {
-                // this row is a commit description piece
-                $commitDescription = substr($row, $commitSkipChars);
-                if (trim($commitDescription)) {
-                    $commitPieces[] = $commitDescription;
+            $item = new Graph();
+            // explode row by {delim} to detect start of commit description
+            $pieces = explode('{delim}', $row);
+            $commitId = isset($pieces[1]) ? $pieces[1] : null;
+            $row = $pieces[0];
+            // parse row chars
+            for ($x = 0; $x <= strlen($row); $x++) {
+                $char = substr($row, $x, 1);
+                if ($char == '\\') {
+                    $item->appendPiece(Graph::LEFT);
+                }
+                else if ($char == '/') {
+                    $item->appendPiece(Graph::RIGHT);
+                }
+                else if ($char == '*') {
+                    $item->appendPiece(Graph::COMMIT);
+                }
+                else if ($char == '|') {
+                    $item->appendPiece(Graph::DIRECT);
                 }
                 else {
-                    // last row of commit description
-                    list ($id, $contributorName, $contributorEmail, $date, $message) = $commitPieces;
-                    // append commit to last graph item
-                    $ret[count($ret) - 1]->setCommit(new Commit($this, [
-                        'id' => $id,
-                        'contributorName' => $contributorName,
-                        'contributorEmail' => $contributorEmail,
-                        'date' => $date,
-                        'message' => $message,
-                    ]));
-                    $commitPieces = [];
-                    $commitSkipChars = 0;
+                    $item->appendPiece(Graph::SPACE);
                 }
             }
-            else {
-                // explode row by {delim} to detect start of commit description
-                $pieces = explode('{delim}', $row);
-                if (isset($pieces[1])) {
-                    // this row is a start of commit description
-                    $commitSkipChars = strlen($pieces[0]);
-                }
-                $row = $pieces[0];
-                $item = new Graph();
-                // parse row chars
-                for ($x = 0; $x <= strlen($row); $x++) {
-                    $char = substr($row, $x, 1);
-                    if ($char == '\\') {
-                        $item->appendPiece(Graph::LEFT);
-                    }
-                    else if ($char == '/') {
-                        $item->appendPiece(Graph::RIGHT);
-                    }
-                    else if ($char == '*') {
-                        $item->appendPiece(Graph::COMMIT);
-                    }
-                    else if ($char == '|') {
-                        $item->appendPiece(Graph::DIRECT);
-                    }
-                    else {
-                        $item->appendPiece(Graph::SPACE);
-                    }
-                }
-                $ret[] = $item;
+            if ($commitId) {
+                $item->setCommit($this->getCommit($commitId));
             }
+            $ret[] = $item;
         }
 
         return $ret;
