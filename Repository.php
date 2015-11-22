@@ -10,6 +10,8 @@ use VcsCommon\exception\CommonException;
  */
 class Repository extends BaseRepository
 {
+    const LOG_FORMAT = "'%H%n%an%n%ae%n%ad%n%f%n'";
+
     /**
      * @var GitWrapper common GIT interface
      */
@@ -87,10 +89,8 @@ class Repository extends BaseRepository
      */
     public function getCommit($id)
     {
-        $prettyFormat = '';
-
         $result = $this->wrapper->execute([
-            'show', $id, '--pretty=format:\'%H%n%an%n%ae%n%ad%n%f%n\''
+            'show', $id, '--pretty=format:' . self::LOG_FORMAT
         ], $this->projectPath, true);
         list ($id, $contributorName, $contributorEmail, $date, $message) = $result;
         return new Commit($this, [
@@ -166,5 +166,37 @@ class Repository extends BaseRepository
         }
 
         return $this->wrapper->execute($command, $this->projectPath, true);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getHistory($limit, $skip)
+    {
+        $ret = [];
+
+        $result = $this->wrapper->execute([
+            'log', '--pretty=format:' . self::LOG_FORMAT,
+            '-n', (int) $limit, '--skip' => (int) $skip
+        ], $this->projectPath, true);
+
+        $commit = [];
+        foreach ($result as $row) {
+            if (trim($row)) {
+                $commit[] = $row;
+            }
+            else if (!empty($commit)) {
+                list ($id, $contributorName, $contributorEmail, $date, $message) = $commit;
+                $ret[] = new Commit($this, [
+                    'id' => $id,
+                    'contributorName' => $contributorName,
+                    'contributorEmail' => $contributorEmail,
+                    'date' => $date,
+                    'message' => $message,
+                ]);
+            }
+        }
+
+        return $ret;
     }
 }
