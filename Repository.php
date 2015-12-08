@@ -11,7 +11,7 @@ use VcsCommon\Graph;
  */
 class Repository extends BaseRepository
 {
-    const LOG_FORMAT = "%H%n%an%n%ae%n%ad%n%f%n";
+    const LOG_FORMAT = "%H%n%an%n%ae%n%ad%n%s%n";
 
     /**
      * @var GitWrapper common GIT interface
@@ -177,7 +177,7 @@ class Repository extends BaseRepository
         $ret = [];
 
         $result = $this->wrapper->execute([
-            'log', '--pretty=format:\'' . self::LOG_FORMAT . '\'',
+            'log', '--format=\'' . self::LOG_FORMAT . '\'',
             '-n', (int) $limit, '--skip' => (int) $skip
         ], $this->projectPath, true);
 
@@ -195,6 +195,7 @@ class Repository extends BaseRepository
                     'date' => $date,
                     'message' => $message,
                 ]);
+                $commit = [];
             }
         }
 
