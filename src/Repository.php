@@ -216,11 +216,6 @@ class Repository extends BaseRepository
             '-n', (int) $limit, '--skip' => (int) $skip,
         ], $this->projectPath, true);
 
-        // commit description pieces
-        $commitPieces = [];
-        // skip chars count for commit description parsing
-        $commitSkipChars = 0;
-
         // parse each rows
         foreach ($result as $row) {
             if (!trim($row)) {

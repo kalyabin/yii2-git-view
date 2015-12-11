@@ -2,13 +2,14 @@
 namespace tests;
 
 use GitView\GitWrapper;
+use GitView\Repository;
 use PHPUnit_Framework_TestCase;
 use Yii;
 
 /**
  * Test wrapper
  */
-class GitWrapperTest extends PHPUnit_Framework_TestCase
+class CaseWrapperTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var array testing variables
@@ -80,7 +81,7 @@ class GitWrapperTest extends PHPUnit_Framework_TestCase
      * @param GitWrapper $wrapper
      *
      * @depends testConstructor
-     * @expectedException \VcsCommon\exception\CommonException
+     * @expectedException VcsCommon\exception\CommonException
      */
     public function testContructorException(GitWrapper $wrapper)
     {
@@ -94,7 +95,7 @@ class GitWrapperTest extends PHPUnit_Framework_TestCase
      * @param GitWrapper $wrapper
      *
      * @depends testConstructor
-     * @expectedException \VcsCommon\exception\CommonException
+     * @expectedException VcsCommon\exception\CommonException
      */
     public function testCommandException(GitWrapper $wrapper)
     {
@@ -131,5 +132,37 @@ class GitWrapperTest extends PHPUnit_Framework_TestCase
 
         $this->assertNotEmpty($wrapper->execute($command, $this->variables['availRepository'], false));
         $this->assertNotEmpty($wrapper->execute($command, $this->variables['availRepository'], true));
+    }
+
+    /**
+     * Tests repository getter
+     *
+     * @param GitWrapper $wrapper
+     * @depends testConstructor
+     */
+    public function testRepository(GitWrapper $wrapper)
+    {
+        $cmd = $this->variables['availCmd'];
+        $repoPath = $this->variables['availRepository'];
+
+        $wrapper->setCmd($cmd);
+        $repository = $wrapper->getRepository($repoPath);
+        $this->assertInstanceOf(Repository::className(), $repository);
+    }
+
+    /**
+     * Tests repository getter error
+     *
+     * @param GitWrapper $wrapper
+     * @depends testConstructor
+     * @expectedException VcsCommon\exception\CommonException
+     */
+    public function testRepositoryException(GitWrapper $wrapper)
+    {
+        $cmd = $this->variables['availCmd'];
+        $repoPath = $this->variables['errorRepository'];
+
+        $wrapper->setCmd($cmd);
+        $wrapper->getRepository($repoPath);
     }
 }
