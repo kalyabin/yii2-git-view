@@ -145,6 +145,10 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
         $this->assertNotEmpty($commit->contributorName);
         $this->assertNotEmpty($commit->contributorEmail);
         $this->assertNotEmpty($commit->message);
+        $this->assertNotEmpty($commit->getParentsId());
+        foreach ($commit->getParentsId() as $parentId) {
+            $this->assertTrue($wrapper->checkIsSha1($parentId));
+        }
 
         return $commit;
     }
@@ -286,32 +290,16 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
     public function testGraphHistory()
     {
         $graph = $this->repository->getGraphHistory(10, 1);
-        $this->assertNotEmpty($graph);
-        $this->assertContainsOnlyInstancesOf(Graph::className(), $graph);
-
-        $hasOneOrMoreCommits = false;
-        foreach ($graph as $item) {
-            /* @var $item Graph */
-            $this->assertInternalType('boolean', $item->hasCommitPiece());
-            $hasOneOrMoreCommits = $hasOneOrMoreCommits || $item->hasCommitPiece();
-            $this->assertNotEmpty($item->getType());
-            $this->assertContainsOnly('string', $item->getType());
-            if ($item->hasCommitPiece()) {
-                $this->assertInstanceOf(Commit::className(), $item->getCommit());
-            }
-            else {
-                $this->assertNull($item->getCommit());
-            }
+        $this->assertInstanceOf(Graph::className(), $graph);
+        $this->assertContainsOnlyInstancesOf(Commit::className(), $graph->getCommits());
+        $this->assertEquals(10, count($graph->getCommits()));
+        $this->assertGreaterThanOrEqual(0, $graph->getLevels());
+        $this->assertLessThan(9, $graph->getLevels());
+        foreach ($graph->getCommits() as $commit) {
+            /* @var $commit Commit */
+            $this->assertInstanceOf(Commit::className(), $commit);
+            $this->assertGreaterThanOrEqual(0, $commit->graphLevel);
+            $this->assertLessThanOrEqual($graph->getLevels(), $commit->graphLevel);
         }
-    }
-
-    /**
-     * Tests graph history exception
-     */
-    public function testGraphHistoryWrongParams()
-    {
-        $graph = $this->repository->getGraphHistory('a', 'b');
-        $this->assertInternalType('array', $graph);
-        $this->assertEmpty($graph);
     }
 }

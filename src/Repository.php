@@ -11,7 +11,7 @@ use VcsCommon\Graph;
  */
 class Repository extends BaseRepository
 {
-    const LOG_FORMAT = "%H%n%an%n%ae%n%ad%n%s%n";
+    const LOG_FORMAT = "%H%n%P%n%an%n%ae%n%ad%n%s%n";
 
     /**
      * @var GitWrapper common GIT interface
@@ -93,9 +93,10 @@ class Repository extends BaseRepository
         $result = $this->wrapper->execute([
             'show', $id, '--pretty=format:\'' . self::LOG_FORMAT . '\''
         ], $this->projectPath, true);
-        list ($id, $contributorName, $contributorEmail, $date, $message) = $result;
+        list ($id, $parent, $contributorName, $contributorEmail, $date, $message) = $result;
         return new Commit($this, [
             'id' => $id,
+            'parentsId' => $parent,
             'contributorName' => $contributorName,
             'contributorEmail' => $contributorEmail,
             'date' => $date,
@@ -187,9 +188,10 @@ class Repository extends BaseRepository
                 $commit[] = $row;
             }
             else if (!empty($commit)) {
-                list ($id, $contributorName, $contributorEmail, $date, $message) = $commit;
+                list ($id, $parent, $contributorName, $contributorEmail, $date, $message) = $commit;
                 $ret[] = new Commit($this, [
                     'id' => $id,
+                    'parentsId' => $parent,
                     'contributorName' => $contributorName,
                     'contributorEmail' => $contributorEmail,
                     'date' => $date,
@@ -204,51 +206,26 @@ class Repository extends BaseRepository
 
     /**
      * @inheritdoc
-     * @todo now for each graph item runs git show command - this not powerful
      */
     public function getGraphHistory($limit, $skip)
     {
-        /* @var $ret Graph */
-        $ret = [];
+        $ret = new Graph();
+
+        $rawHistory = $this->getHistory($limit, $skip);
 
         $result = $this->wrapper->execute([
-            'log', '--graph', '--format' => "format:'{delim}%H'",
+            'log', '--graph', '--format' => "format:''",
             '-n', (int) $limit, '--skip' => (int) $skip,
         ], $this->projectPath, true);
 
-        // parse each rows
+        $cursor = 0;
         foreach ($result as $row) {
-            if (!trim($row)) {
-                continue;
+            $row = str_replace(' ', '', $row);
+            if (strpos($row, '*') !== false && isset($rawHistory[$cursor])) {
+                $rawHistory[$cursor]->graphLevel = strpos($row, '*');
+                $ret->pushCommit($rawHistory[$cursor]);
+                $cursor++;
             }
-            $item = new Graph();
-            // explode row by {delim} to detect start of commit description
-            $pieces = explode('{delim}', $row);
-            $commitId = isset($pieces[1]) ? $pieces[1] : null;
-            $row = $pieces[0];
-            // parse row chars
-            for ($x = 0; $x <= strlen($row); $x++) {
-                $char = substr($row, $x, 1);
-                if ($char == '\\') {
-                    $item->appendPiece(Graph::LEFT);
-                }
-                else if ($char == '/') {
-                    $item->appendPiece(Graph::RIGHT);
-                }
-                else if ($char == '*') {
-                    $item->appendPiece(Graph::COMMIT);
-                }
-                else if ($char == '|') {
-                    $item->appendPiece(Graph::DIRECT);
-                }
-                else {
-                    $item->appendPiece(Graph::SPACE);
-                }
-            }
-            if ($commitId) {
-                $item->setCommit($this->getCommit($commitId));
-            }
-            $ret[] = $item;
         }
 
         return $ret;
