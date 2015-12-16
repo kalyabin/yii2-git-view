@@ -188,7 +188,7 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
                 $this->assertContainsOnly('string', $lines['lines']);
                 foreach ($lines['lines'] as $line) {
                     if (!empty($line)) {
-                        $this->assertRegExp('#^([\s]|\+|\-){1}#i', $line);
+                        $this->assertRegExp('#^([\s]|\+|\-|\\\\){1}#i', $line);
                     }
                 }
             }

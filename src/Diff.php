@@ -15,6 +15,10 @@ class Diff extends BaseDiff
     protected function initialize($rows)
     {
         $diffId = null;
+
+        $this->previousFilePath = self::NULL_PATH;
+        $this->newFilePath = self::NULL_PATH;
+
         foreach ($rows as $n => $row) {
             if ($n >= 0 && $n <= 3) {
                 // first 3 lines are description
