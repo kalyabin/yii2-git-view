@@ -149,6 +149,14 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
         foreach ($commit->getParentsId() as $parentId) {
             $this->assertTrue($wrapper->checkIsSha1($parentId));
         }
+        $this->assertNotEmpty($commit->getChangedFiles());
+        $this->assertContainsOnly('array', $commit->getChangedFiles());
+        foreach ($commit->getChangedFiles() as $item) {
+            $this->assertArrayHasKey('path', $item);
+            $this->assertArrayHasKey('status', $item);
+            $this->assertInstanceOf(File::className(), $item['path']);
+            $this->assertInternalType('string', $item['status']);
+        }
 
         return $commit;
     }

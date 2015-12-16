@@ -91,10 +91,10 @@ class Repository extends BaseRepository
     public function getCommit($id)
     {
         $result = $this->wrapper->execute([
-            'show', $id, '--pretty=format:\'' . self::LOG_FORMAT . '\''
+            'show', $id, '--pretty=format:\'' . self::LOG_FORMAT . '\'', '--name-status'
         ], $this->projectPath, true);
         list ($id, $parent, $contributorName, $contributorEmail, $date, $message) = $result;
-        return new Commit($this, [
+        $commit = new Commit($this, [
             'id' => $id,
             'parentsId' => $parent,
             'contributorName' => $contributorName,
@@ -102,6 +102,25 @@ class Repository extends BaseRepository
             'date' => $date,
             'message' => $message,
         ]);
+
+        // get changed files
+        if (count($result) > 7) {
+            for ($x = 7; $x < count($result); $x++) {
+                $pieces = preg_split('#[\s]+#', trim($result[$x]), 2);
+                if (count($pieces) == 2) {
+                    // first item is a file status, second item is a file path
+                    $commit->appendChangedFile([
+                        'status' => $pieces[0],
+                        'path' => new \VcsCommon\File(
+                            $this->getProjectPath() . DIRECTORY_SEPARATOR . $pieces[1],
+                            $this
+                        )
+                    ]);
+                }
+            }
+        }
+
+        return $commit;
     }
 
     /**
