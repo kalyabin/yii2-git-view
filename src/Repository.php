@@ -175,10 +175,12 @@ class Repository extends BaseRepository
                 // specific file commit
                 $command[] = $arg2;
             }
+            $command[] = '--';
             $command[] = $arg1;
         }
         else if ($type == self::DIFF_REPOSITORY) {
             // full repo diff
+            $command[] = '--';
             $command[] = '.';
         }
         else {
@@ -186,7 +188,14 @@ class Repository extends BaseRepository
             throw new CommonException('Type a valid command');
         }
 
-        return $this->wrapper->execute($command, $this->projectPath, true);
+        $result = $this->wrapper->execute($command, $this->projectPath, true);
+        if (empty($result)) {
+            // force git diff command
+            $command[0] = 'diff';
+            $command[1] = "--pretty=format:''";
+            $result = $this->wrapper->execute($command, $this->projectPath, true);
+        }
+        return $result;
     }
 
     /**

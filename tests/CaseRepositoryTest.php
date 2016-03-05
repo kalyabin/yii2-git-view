@@ -235,8 +235,8 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
 
         $diff = $this->repository->getDiff(
             Repository::DIFF_PATH,
-            $this->variables['commitFileDiff'][0],
-            $this->variables['commitFileDiff'][1]
+            $this->variables['commitFileDiff'][1],
+            $this->variables['commitFileDiff'][0]
         );
         $this->assertNotEmpty($diff);
         $this->assertContainsOnly('string', $diff);
