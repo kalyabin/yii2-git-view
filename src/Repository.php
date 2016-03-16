@@ -110,13 +110,11 @@ class Repository extends BaseRepository
                 $pieces = preg_split('#[\s]+#', trim($result[$x]), 2);
                 if (count($pieces) == 2) {
                     // first item is a file status, second item is a file path
-                    $commit->appendChangedFile([
-                        'status' => $pieces[0],
-                        'path' => new File(
-                            $this->getProjectPath() . DIRECTORY_SEPARATOR . $pieces[1],
-                            $this
-                        )
-                    ]);
+                    $commit->appendChangedFile(new File(
+                        $this->getProjectPath() . DIRECTORY_SEPARATOR . $pieces[1],
+                        $this,
+                        $pieces[0]
+                    ));
                 }
             }
         }
