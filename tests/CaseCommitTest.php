@@ -25,11 +25,6 @@ class CaseCommitTest extends PHPUnit_Framework_TestCase
      */
     protected $repository;
 
-    /**
-     * @var Commit commit model
-     */
-    protected $commit;
-
 
     /**
      * @inheritdoc
@@ -42,8 +37,6 @@ class CaseCommitTest extends PHPUnit_Framework_TestCase
         $wrapper = new GitWrapper();
         $repoPath = Yii::$app->params['wrapper']['availRepository'];
         $this->repository = $wrapper->getRepository($repoPath);
-
-        $this->commit = $this->repository->getCommit($this->variables['id']);
     }
 
 
@@ -52,7 +45,7 @@ class CaseCommitTest extends PHPUnit_Framework_TestCase
      */
     public function testCommitVariables()
     {
-        $commit = $this->commit;
+        $commit = $this->repository->getCommit($this->variables['diff']);
 
         $this->assertInstanceOf('DateTime', $commit->getDate());
 
@@ -129,8 +122,23 @@ class CaseCommitTest extends PHPUnit_Framework_TestCase
      */
     public function testCommitRawFile(Commit $commit)
     {
+        $this->assertNull($commit->getFileStatus('composer.json'));
         $rawFile = $commit->getRawFile('composer.json');
         $this->assertInternalType('string', $rawFile);
         $this->assertJson($rawFile);
+    }
+
+    /**
+     * Test deleted raw file
+     *
+     * @depends testCommitRawFile
+     */
+    public function testCommitDeletedRawFile()
+    {
+        $commit = $this->repository->getCommit($this->variables['rawFile']['commitId']);
+        $this->assertInstanceOf(Commit::className(), $commit);
+        $this->assertEquals('D', $commit->getFileStatus($this->variables['rawFile']['file']));
+        $rawFile = $commit->getPreviousRawFile($this->variables['rawFile']['file']);
+        $this->assertInternalType('string', $rawFile);
     }
 }

@@ -3,6 +3,7 @@ namespace GitView;
 
 use VcsCommon\BaseRepository;
 use VcsCommon\exception\CommonException;
+use VcsCommon\File;
 use VcsCommon\Graph;
 
 /**
@@ -111,7 +112,7 @@ class Repository extends BaseRepository
                     // first item is a file status, second item is a file path
                     $commit->appendChangedFile([
                         'status' => $pieces[0],
-                        'path' => new \VcsCommon\File(
+                        'path' => new File(
                             $this->getProjectPath() . DIRECTORY_SEPARATOR . $pieces[1],
                             $this
                         )

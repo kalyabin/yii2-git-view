@@ -67,4 +67,15 @@ class Commit extends BaseCommit
         ];
         return $this->repository->getWrapper()->execute($params, $this->repository->getProjectPath());
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getPreviousRawFile($filePath)
+    {
+        $params = [
+            'show', $this->id . '^:' . $filePath,
+        ];
+        return $this->repository->getWrapper()->execute($params, $this->repository->getProjectPath());
+    }
 }
