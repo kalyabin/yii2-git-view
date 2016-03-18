@@ -211,7 +211,7 @@ class Repository extends BaseRepository
 
         $commit = [];
         foreach ($result as $row) {
-            if (trim($row)) {
+            if (count($commit) < 6) {
                 $commit[] = $row;
             }
             else if (!empty($commit)) {
