@@ -99,6 +99,35 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
         $history = $this->repository->getHistory(10, 5);
         $this->assertNotEmpty($history);
         $this->assertContainsOnlyInstancesOf(Commit::className(), $history);
+        $this->assertCount(10, $history);
+
+        return $history;
+    }
+
+    /**
+     * Tests history getter for sepcified path
+     */
+    public function testPathHistory()
+    {
+        $history = $this->repository->getHistory(2, 0, $this->variables['pathHistory']);
+        $this->assertNotEmpty($history);
+        $this->assertContainsOnlyInstancesOf(Commit::className(), $history);
+        $this->assertCount(2, $history);
+
+        foreach ($history as $commit) {
+            /* @var $commit Commit */
+            $commit = $this->repository->getCommit($commit->getId());
+            $this->assertNotEmpty($commit->getChangedFiles());
+            $hasCurrentFile = false;
+            foreach ($commit->getChangedFiles() as $file) {
+                /* @var $file File */
+                $this->assertInstanceOf(File::className(), $file);
+                if ($this->variables['pathHistory'] === $file->getPathname()) {
+                    $hasCurrentFile = true;
+                }
+            }
+            $this->assertTrue($hasCurrentFile);
+        }
 
         return $history;
     }

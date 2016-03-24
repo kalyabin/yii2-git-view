@@ -200,14 +200,19 @@ class Repository extends BaseRepository
     /**
      * @inheritdoc
      */
-    public function getHistory($limit, $skip)
+    public function getHistory($limit, $skip, $path = null)
     {
         $ret = [];
 
-        $result = $this->wrapper->execute([
+        $command = [
             'log', '--format=\'' . self::LOG_FORMAT . '\'',
             '-n', (int) $limit, '--skip' => (int) $skip
-        ], $this->projectPath, true);
+        ];
+        if (!is_null($path)) {
+            $command[] = '-- ' . $path;
+        }
+
+        $result = $this->wrapper->execute($command, $this->projectPath, true);
 
         $commit = [];
         foreach ($result as $row) {
@@ -234,7 +239,7 @@ class Repository extends BaseRepository
     /**
      * @inheritdoc
      */
-    public function getGraphHistory($limit, $skip)
+    public function getGraphHistory($limit, $skip, $path = null)
     {
         $ret = new Graph();
 

@@ -19,6 +19,7 @@ return [
         'commitFileDiff' => [
             '1244f5a7409604e4027e9d97538f65d32767fb14', 'Commit.php',
         ],
+        'pathHistory' => 'src/Diff.php',
     ],
     'commit' => [
         'diff' => '1244f5a7409604e4027e9d97538f65d32767fb14',
