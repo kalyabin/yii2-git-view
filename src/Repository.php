@@ -278,7 +278,7 @@ class Repository extends BaseRepository
 
         if (!isset($ignoredFilesList[$dirname])) {
             $command = [
-                'ls-files', $dirname, '--ignored', '--exclude-standard', '--others',
+                'check-ignore', $dirname . DIRECTORY_SEPARATOR . '*',
             ];
             $ignoredFilesList[$dirname] = $this->wrapper->execute($command, $this->projectPath, true);
         }
