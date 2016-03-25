@@ -255,6 +255,8 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
      */
     public function testIgnore()
     {
+        // check full path ignored files
+        $this->repository->pathIsNotIgnored('./*');
         $this->assertFalse($this->repository->pathIsNotIgnored($this->variables['ignoredPath']));
         $this->assertTrue($this->repository->pathIsNotIgnored($this->variables['notIgnoredPath']));
     }

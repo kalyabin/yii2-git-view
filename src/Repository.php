@@ -280,7 +280,7 @@ class Repository extends BaseRepository
             $command = [
                 'check-ignore', $dirname . DIRECTORY_SEPARATOR . '*',
             ];
-            $ignoredFilesList[$dirname] = $this->wrapper->execute($command, $this->projectPath, true);
+            $ignoredFilesList[$dirname] = $this->wrapper->execute($command, $this->projectPath, true, true);
         }
 
         return isset($ignoredFilesList[$dirname]) && !in_array($filePath, $ignoredFilesList[$dirname]);
