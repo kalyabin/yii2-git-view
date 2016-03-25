@@ -249,4 +249,13 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
             $this->assertLessThanOrEqual($graph->getLevels(), $commit->graphLevel);
         }
     }
+
+    /**
+     * Tests ignored and not ignored files
+     */
+    public function testIgnore()
+    {
+        $this->assertFalse($this->repository->pathIsNotIgnored($this->variables['ignoredPath']));
+        $this->assertTrue($this->repository->pathIsNotIgnored($this->variables['notIgnoredPath']));
+    }
 }

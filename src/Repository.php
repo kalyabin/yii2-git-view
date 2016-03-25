@@ -5,6 +5,8 @@ use VcsCommon\BaseRepository;
 use VcsCommon\exception\CommonException;
 use VcsCommon\File;
 use VcsCommon\Graph;
+use function mb_strlen;
+use function mb_substr;
 
 /**
  * Repository class
@@ -261,5 +263,28 @@ class Repository extends BaseRepository
         }
 
         return $ret;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function pathIsNotIgnored($filePath)
+    {
+        $ret = true;
+
+        $filePath = ltrim($filePath, DIRECTORY_SEPARATOR);
+
+        static $ignoredFilesList = [];
+
+        $dirname = dirname($filePath);
+
+        if (!isset($ignoredFilesList[$dirname])) {
+            $command = [
+                'ls-files', $dirname, '--ignored', '--exclude-standard', '--others',
+            ];
+            $ignoredFilesList[$dirname] = $this->wrapper->execute($command, $this->projectPath, true);
+        }
+
+        return isset($ignoredFilesList[$dirname]) && !in_array($filePath, $ignoredFilesList[$dirname]);
     }
 }

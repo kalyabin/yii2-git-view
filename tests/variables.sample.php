@@ -20,6 +20,8 @@ return [
             '1244f5a7409604e4027e9d97538f65d32767fb14', 'Commit.php',
         ],
         'pathHistory' => 'src/Diff.php',
+        'ignoredPath' => 'tests/variables.local.php',
+        'notIgnoredPath' => 'tests/variables.local.sample.php',
     ],
     'commit' => [
         'diff' => '1244f5a7409604e4027e9d97538f65d32767fb14',
