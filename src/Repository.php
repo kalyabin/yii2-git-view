@@ -66,7 +66,7 @@ class Repository extends BaseRepository
         $pattern = '#^[\s]+|[\t]+(^[\s]+)[\s]+([a-fA-F0-9]+)[\s]+(.*)$#iU';
 
         foreach ($list as $str) {
-            if ($isCurrent = $str[0] == '*') {
+            if ($isCurrent = mb_substr($str, 0, 1) === '*') {
                 // replace * for common splitting string
                 $str = mb_substr($str, 1, mb_strlen($str));
             }
@@ -268,21 +268,12 @@ class Repository extends BaseRepository
      */
     public function pathIsNotIgnored($filePath)
     {
-        $ret = true;
+        $command = [
+            'check-ignore', \yii\helpers\FileHelper::normalizePath($filePath),
+        ];
 
-        $filePath = ltrim($filePath, DIRECTORY_SEPARATOR);
+        $result = $this->wrapper->execute($command, $this->projectPath, true, true);
 
-        static $ignoredFilesList = [];
-
-        $dirname = dirname($filePath);
-
-        if (!isset($ignoredFilesList[$dirname])) {
-            $command = [
-                'check-ignore', $dirname . DIRECTORY_SEPARATOR . '*',
-            ];
-            $ignoredFilesList[$dirname] = $this->wrapper->execute($command, $this->projectPath, true, true);
-        }
-
-        return isset($ignoredFilesList[$dirname]) && !in_array($filePath, $ignoredFilesList[$dirname]);
+        return empty($result);
     }
 }
