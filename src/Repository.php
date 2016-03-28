@@ -269,7 +269,7 @@ class Repository extends BaseRepository
     public function pathIsNotIgnored($filePath)
     {
         $command = [
-            'check-ignore', \yii\helpers\FileHelper::normalizePath($filePath),
+            'check-ignore', ltrim(\yii\helpers\FileHelper::normalizePath($filePath), DIRECTORY_SEPARATOR),
         ];
 
         $result = $this->wrapper->execute($command, $this->projectPath, true, true);
