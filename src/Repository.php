@@ -20,24 +20,17 @@ class Repository extends BaseRepository
     protected $wrapper;
 
     /**
-     * Defines a commit diff command
+     * Returns true if repository exists in project path.
+     *
+     * @return boolean
+     * @throws CommonException
      */
-    const DIFF_COMMIT = 'commit';
-
-    /**
-     * Defines a compare diff command
-     */
-    const DIFF_COMPARE = 'compare';
-
-    /**
-     * Defines a path diff command
-     */
-    const DIFF_PATH = 'path';
-
-    /**
-     * Defines a full repository diff command
-     */
-    const DIFF_REPOSITORY = 'repository';
+    protected function checkRepository()
+    {
+        // repository exists and well works if the command do not throws CommonException
+        $this->wrapper->execute(['ls-remote', '--exit-code', $this->projectPath, 'HEAD']);
+        return true;
+    }
 
     /**
      * Check repository status and returns it.

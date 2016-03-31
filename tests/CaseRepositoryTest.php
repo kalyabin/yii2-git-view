@@ -87,6 +87,18 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
         $branches = $this->repository->getBranches();
         $this->assertNotEmpty($branches);
         $this->assertContainsOnlyInstancesOf(Branch::className(), $branches);
+
+        // check if current branch exists
+        $currentBranchExists = false;
+        foreach ($branches as $branch) {
+            /* @var $branch Branch */
+            if ($branch->getIsCurrent()) {
+                $currentBranchExists = true;
+                break;
+            }
+        }
+
+        $this->assertTrue($currentBranchExists);
     }
 
     /**
@@ -255,8 +267,6 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
      */
     public function testIgnore()
     {
-        // check full path ignored files
-        $this->repository->pathIsNotIgnored('./*');
         $this->assertFalse($this->repository->pathIsNotIgnored($this->variables['ignoredPath']));
         $this->assertTrue($this->repository->pathIsNotIgnored($this->variables['notIgnoredPath']));
     }
