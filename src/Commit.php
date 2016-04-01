@@ -63,7 +63,7 @@ class Commit extends BaseCommit
     public function getRawFile($filePath)
     {
         $params = [
-            'show', $this->id . ':' . $filePath,
+            'show', $this->id . ':' . escapeshellcmd($filePath),
         ];
         return $this->repository->getWrapper()->execute($params, $this->repository->getProjectPath());
     }
@@ -74,7 +74,7 @@ class Commit extends BaseCommit
     public function getPreviousRawFile($filePath)
     {
         $params = [
-            'show', $this->id . '^:' . $filePath,
+            'show', $this->id . '^:' . escapeshellcmd($filePath),
         ];
         return $this->repository->getWrapper()->execute($params, $this->repository->getProjectPath());
     }

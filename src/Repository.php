@@ -28,7 +28,7 @@ class Repository extends BaseRepository
     protected function checkRepository()
     {
         // repository exists and well works if the command do not throws CommonException
-        $this->wrapper->execute(['ls-remote', '--exit-code', $this->projectPath, 'HEAD']);
+        $this->wrapper->execute(['ls-remote', '--exit-code', escapeshellcmd($this->projectPath), 'HEAD']);
         return true;
     }
 
@@ -154,21 +154,21 @@ class Repository extends BaseRepository
 
         if ($type == self::DIFF_COMMIT && $this->wrapper->checkIsSha1($arg1)) {
             // commit diff command requires second param a commit sha1
-            $command[] = $arg1;
+            $command[] = escapeshellcmd($arg1);
         }
         else if ($type == self::DIFF_COMPARE && $this->wrapper->checkIsSha1($arg1) && $this->wrapper->checkIsSha1($arg2)) {
             // commits compare requires second param a commit sha1 and third param too
-            $command[] = $arg1 . '..' . $arg2;
+            $command[] = escapeshellcmd($arg1 . '..' . $arg2);
         }
         else if ($type == self::DIFF_PATH && is_string($arg1)) {
             // path diff requires second param like a string
             // if this is not a valid path - GitWrapper throws CommonException
             if (is_string($arg2) && $this->wrapper->checkIsSha1($arg2)) {
                 // specific file commit
-                $command[] = $arg2;
+                $command[] = escapeshellcmd($arg2);
             }
             $command[] = '--';
-            $command[] = $arg1;
+            $command[] = escapeshellcmd($arg1);
         }
         else if ($type == self::DIFF_REPOSITORY) {
             // full repo diff
@@ -202,7 +202,7 @@ class Repository extends BaseRepository
             '-n', (int) $limit, '--skip' => (int) $skip
         ];
         if (!is_null($path)) {
-            $command[] = '-- ' . $path;
+            $command[] = '-- ' . escapeshellcmd($path);
         }
 
         $result = $this->wrapper->execute($command, $this->projectPath, true);
@@ -261,8 +261,9 @@ class Repository extends BaseRepository
      */
     public function pathIsNotIgnored($filePath)
     {
+        $path = ltrim(\yii\helpers\FileHelper::normalizePath($filePath), DIRECTORY_SEPARATOR);
         $command = [
-            'check-ignore', ltrim(\yii\helpers\FileHelper::normalizePath($filePath), DIRECTORY_SEPARATOR),
+            'check-ignore', escapeshellcmd($path),
         ];
 
         $result = $this->wrapper->execute($command, $this->projectPath, true, true);
