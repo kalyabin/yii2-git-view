@@ -146,6 +146,8 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
 
     /**
      * Tests history wrong params
+     *
+     * @expectedException \VcsCommon\exception\CommonException
      */
     public function testHistoryExceptionWrongParams()
     {

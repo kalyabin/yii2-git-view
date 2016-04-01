@@ -197,9 +197,16 @@ class Repository extends BaseRepository
     {
         $ret = [];
 
+        $limit = (int) $limit;
+        $skip = (int) $skip;
+
+        if ($limit <= 0 || $skip < 0) {
+            throw new CommonException();
+        }
+
         $command = [
             'log', '--format=\'' . self::LOG_FORMAT . '\'',
-            '-n', (int) $limit, '--skip' => (int) $skip
+            '-n', $limit, '--skip' => $skip
         ];
         if (!is_null($path)) {
             $command[] = '-- ' . escapeshellcmd($path);
