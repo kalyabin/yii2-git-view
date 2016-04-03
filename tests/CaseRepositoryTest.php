@@ -167,6 +167,40 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Check diff array strings by diff git command
+     *
+     * @param array $diff
+     */
+    protected function diffContainsSpecialIdentifiers($diff)
+    {
+        $this->assertInternalType('array', $diff);
+        $this->assertNotEmpty($diff);
+        $this->assertContainsOnly('string', $diff);
+
+        $hasDiff = false;
+        $hasHeads = false;
+        $hasADiff = false;
+        $hasBDiff = false;
+
+        foreach ($diff as $row) {
+            if (mb_substr($row, 0, 4) === 'diff') {
+                $hasDiff = true;
+            }
+            else if (mb_substr($row, 0, 3) === '---') {
+                $hasADiff = true;
+            }
+            else if (mb_substr($row, 0, 3) === '+++') {
+                $hasBDiff = true;
+            }
+            else if (mb_substr($row, 0, 2) === '@@') {
+                $hasHeads = true;
+            }
+        }
+
+        $this->assertTrue($hasDiff && $hasHeads && $hasADiff && $hasBDiff);
+    }
+
+    /**
      * Test diff
      */
     public function testDiff()
@@ -175,24 +209,21 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
             Repository::DIFF_COMMIT,
             $this->variables['commitDiff']
         );
-        $this->assertNotEmpty($diff);
-        $this->assertContainsOnly('string', $diff);
+        $this->diffContainsSpecialIdentifiers($diff);
 
         $diff = $this->repository->getDiff(
             Repository::DIFF_COMPARE,
             $this->variables['commitCompare'][0],
             $this->variables['commitCompare'][1]
         );
-        $this->assertNotEmpty($diff);
-        $this->assertContainsOnly('string', $diff);
+        $this->diffContainsSpecialIdentifiers($diff);
 
         $diff = $this->repository->getDiff(
             Repository::DIFF_PATH,
             $this->variables['commitFileDiff'][1],
             $this->variables['commitFileDiff'][0]
         );
-        $this->assertNotEmpty($diff);
-        $this->assertContainsOnly('string', $diff);
+        $this->diffContainsSpecialIdentifiers($diff);
     }
 
     /**
