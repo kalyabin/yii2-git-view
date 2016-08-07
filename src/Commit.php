@@ -52,6 +52,7 @@ class Commit extends BaseCommit
             $previewFile[] = $row;
         }
 
+        // append last file diff to full array
         $appendFileDiff();
 
         return $ret;
