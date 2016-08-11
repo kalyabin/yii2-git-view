@@ -303,4 +303,21 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->repository->pathIsNotIgnored($this->variables['ignoredPath']));
         $this->assertTrue($this->repository->pathIsNotIgnored($this->variables['notIgnoredPath']));
     }
+
+    /**
+     * Tests binary binary file
+     */
+    public function testBinary()
+    {
+        $wrapper = new GitWrapper();
+
+        $fileSize = $this->variables['binaryTest']['fileSize'];
+
+        $repository = $wrapper->getRepository($this->variables['binaryTest']['projectPath']);
+        $repository->getBinaryFile($this->variables['binaryTest']['commitId'], $this->variables['binaryTest']['filePath'], function($data) use (&$fileSize) {
+            $fileSize -= strlen($data);
+        });
+
+        $this->assertEquals(0, $fileSize);
+    }
 }

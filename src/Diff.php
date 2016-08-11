@@ -30,7 +30,7 @@ class Diff extends BaseDiff
                 }
 
                 if (StringHelper::startsWith($row, 'Binary files')) {
-                    // stop parsing if diff is parsing
+                    // stop parsing if diff is binary
                     $this->isBinary = true;
                     break;
                 }

@@ -22,6 +22,12 @@ return [
         'pathHistory' => 'src/Diff.php',
         'ignoredPath' => 'tests/variables.local.php',
         'notIgnoredPath' => 'tests/variables.local.sample.php',
+        'binaryTest' => [
+            'projectPath' => '/path/to/git/project',
+            'commitId' => 'sha1',
+            'filePath' => '/path/to/binary/file',
+            'fileSize' => 63969,
+        ],
     ],
     'commit' => [
         'diff' => '1244f5a7409604e4027e9d97538f65d32767fb14',
