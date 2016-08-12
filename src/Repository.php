@@ -277,14 +277,4 @@ class Repository extends BaseRepository
 
         return empty($result);
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function getBinaryFile($commitId, $filePath, $streamHandler)
-    {
-        $this->wrapper->executeBinary($streamHandler, [
-            'show', $commitId . ':' . $filePath
-        ], $this->projectPath, false);
-    }
 }

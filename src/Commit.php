@@ -72,6 +72,17 @@ class Commit extends BaseCommit
     /**
      * @inheritdoc
      */
+    public function getRawBinaryFile($filePath, $streamHandler)
+    {
+        $params = [
+            'show', $this->id . ':' . escapeshellcmd($filePath)
+        ];
+        $this->repository->getWrapper()->executeBinary($streamHandler, $params, $this->repository->getProjectPath());
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getPreviousRawFile($filePath)
     {
         $params = [
