@@ -90,4 +90,21 @@ class Commit extends BaseCommit
         ];
         return $this->repository->getWrapper()->execute($params, $this->repository->getProjectPath());
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getChangedFilesInternal()
+    {
+        $result = $this->repository->getWrapper()->execute([
+            'show', $this->getId(), '--pretty=format:\'\'', '--name-status'
+        ], $this->repository->projectPath, true);
+
+        foreach ($result as $row) {
+            $pieces = preg_split('#[\s]+#', trim($row), 2);
+            if (count($pieces) == 2) {
+                yield $pieces[1] => $pieces[0];
+            }
+        }
+    }
 }

@@ -85,7 +85,7 @@ class Repository extends BaseRepository
     public function getCommit($id)
     {
         $result = $this->wrapper->execute([
-            'show', $id, '--pretty=format:\'' . self::LOG_FORMAT . '\'', '--name-status'
+            'show', '--quiet', $id, '--pretty=format:\'' . self::LOG_FORMAT . '\'',
         ], $this->projectPath, true);
         list ($id, $parent, $contributorName, $contributorEmail, $date, $message) = $result;
         $commit = new Commit($this, [
@@ -96,17 +96,6 @@ class Repository extends BaseRepository
             'date' => $date,
             'message' => $message,
         ]);
-
-        // get changed files
-        if (count($result) > 7) {
-            for ($x = 7; $x < count($result); $x++) {
-                $pieces = preg_split('#[\s]+#', trim($result[$x]), 2);
-                if (count($pieces) == 2) {
-                    // first item is a file status, second item is a file path
-                    $commit->appendChangedFile($pieces[1], $pieces[0]);
-                }
-            }
-        }
 
         return $commit;
     }
