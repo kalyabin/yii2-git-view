@@ -61,12 +61,22 @@ class CaseCommitTest extends PHPUnit_Framework_TestCase
         }
         $this->assertNotEmpty($commit->getChangedFiles());
         $this->assertContainsOnly(File::className(), $commit->getChangedFiles());
+        $lastFilePath = null;
+        $lastFileStatus = null;
         foreach ($commit->getChangedFiles() as $item) {
             $this->assertInstanceOf(File::className(), $item);
             $this->assertInternalType('string', $item->getStatus());
             $this->assertInternalType('string', $item->getPath());
             $this->assertInternalType('string', $item->getPathname());
+            $lastFilePath = $item->getPathname();
+            $lastFileStatus = $item->getStatus();
         }
+
+        $this->assertEquals($commit->getFileStatus($lastFilePath), $lastFileStatus);
+        $lastFile = $commit->getFileByPath($lastFilePath);
+        $this->assertInstanceOf(File::className(), $lastFile);
+        $this->assertEquals($lastFilePath, $lastFile->getPathname());
+        $this->assertEquals($lastFileStatus, $lastFile->getStatus());
 
         return $commit;
     }

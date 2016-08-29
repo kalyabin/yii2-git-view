@@ -117,7 +117,7 @@ class CaseWrapperTest extends PHPUnit_Framework_TestCase
         $wrapper->setCmd($cmd);
 
         $command = ['log', '--skip' => 1, '-n', '1'];
-        $result = $cmd . ' log --skip=1 -n 1';
+        $result = $cmd . ' --no-pager log --skip=1 -n 1';
 
         $this->assertEquals($result, $wrapper->buildCommand($command));
 

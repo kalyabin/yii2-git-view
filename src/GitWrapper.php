@@ -63,4 +63,21 @@ class GitWrapper extends BaseWrapper
     {
         return is_string($str) && preg_match('#^[a-f|A-F|0-9]+$#i', $str);
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildCommand($params)
+    {
+        // prepend postfix --no-pager for all commands
+        if (is_scalar($params)) {
+            $params = '--no-pager ' . $params;
+        } elseif (is_array($params)) {
+            $params = \yii\helpers\ArrayHelper::merge([
+                '--no-pager'
+            ], $params);
+        }
+
+        return parent::buildCommand($params);
+    }
 }

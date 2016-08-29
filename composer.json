@@ -3,7 +3,7 @@
     "description": "Yii2 extension to view and to control GIT repositories",
     "type": "extension",
     "license": "BSD-3-Clause",
-    "version": "0.1.4-dev",
+    "version": "0.1.5-dev",
     "keywords": [
         "yii2", "extension", "git", "repository"
     ],
