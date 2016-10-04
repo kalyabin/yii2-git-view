@@ -76,7 +76,8 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
      */
     public function testCheckStatus()
     {
-        $this->repository->checkStatus();
+        $result = $this->repository->checkStatus();
+        $this->assertInternalType('string', $result);
     }
 
     /**

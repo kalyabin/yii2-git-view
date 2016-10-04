@@ -5,11 +5,16 @@ php:
   - '7.0'
   - hhvm
   - nightly
+sudo: false
+matrix:
+  allow_failures:
+    - php: hhvm # need to check git show command for this tests
 cache:
   directories:
     - vendor
     - $HOME/.composer/cache
 install:
+  - phpenv config-rm xdebug.ini || echo "xdebug is not installed"
   - travis_retry composer self-update && composer --version
   - travis_retry composer global require "fxp/composer-asset-plugin:^1.2.0"
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
