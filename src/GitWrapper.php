@@ -31,7 +31,7 @@ class GitWrapper extends BaseWrapper
      */
     public function checkVersion()
     {
-        $pattern = '#^git[\s]version[\s]([\d]+\.?([\d]+)?\.([\d]+)?)$#';
+        $pattern = '#([\d]+\.?([\d]+)?\.([\d]+)?)#';
 
         $result = $this->execute('--version');
         if (!preg_match($pattern, $result)) {
