@@ -70,7 +70,7 @@ class CaseWrapperTest extends PHPUnit_Framework_TestCase
 
         // check version
         $wrapper->checkVersion();
-        $this->assertRegExp('/^([\d]+)\.?([\d]+)?\.?([\d]+)?$/', $wrapper->getVersion());
+        $this->assertRegExp('/([\d]+)\.?([\d]+)?\.?([\d]+)?/', $wrapper->getVersion());
 
         return $wrapper;
     }
