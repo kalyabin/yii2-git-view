@@ -7,6 +7,14 @@ require __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
 
 Yii::setAlias('@tests', __DIR__);
 
+// enable debug
+define('VCS_DEBUG', true);
+define('VCS_DEBUG_FILE', __DIR__ . '/repo/vcs_debug.log');
+
+if (is_file(VCS_DEBUG_FILE)) {
+    unlink(VCS_DEBUG_FILE);
+}
+
 $testingVariables = include __DIR__ . '/testing.variables.php';
 
 // install testing repository first

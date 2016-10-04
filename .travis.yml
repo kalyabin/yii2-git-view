@@ -17,3 +17,5 @@ install:
   - travis_retry composer update --prefer-dist
 script:
   - vendor/bin/phpunit
+after_script:
+  - cat tests/repo/vcs_debug.log
