@@ -35,7 +35,7 @@ class GitWrapper extends BaseWrapper
 
         $result = $this->execute('--version');
         if (!preg_match($pattern, $result)) {
-            throw new CommonException('Git command not found');
+            throw new CommonException('Git command not found, version result is: ' . $result);
         }
         $this->version = preg_replace($pattern, '$1', $result);
     }
