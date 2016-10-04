@@ -6,7 +6,14 @@ php:
   - '7.0'
   - hhvm
   - nightly
+cache:
+  directories:
+    - vendor
+    - $HOME/.composer/cache
 install:
-  - composer install
+  - travis_retry composer self-update && composer --version
+  - travis_retry composer global require "fxp/composer-asset-plugin:^1.2.0"
+  - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - travis_retry composer update --prefer-dist
 script:
-  - phpunit
+  - vendor/bin/phpunit
