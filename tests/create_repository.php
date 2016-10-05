@@ -29,3 +29,5 @@ if (!is_dir($repoPath)) {
         exit(1);
     }
 }
+
+return $testingVariables['repositoryPath'];
