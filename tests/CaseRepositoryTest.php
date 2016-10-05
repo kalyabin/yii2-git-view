@@ -301,6 +301,12 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
      */
     public function testIgnore()
     {
+        // create file if not exists
+        $filePath = $this->repository->getProjectPath() . DIRECTORY_SEPARATOR . $this->variables['ignoredPath'];
+        if (!file_exists($filePath)) {
+            file_put_contents($filePath, 'ignored file');
+        }
+
         $this->assertFalse($this->repository->pathIsNotIgnored($this->variables['ignoredPath']));
         $this->assertTrue($this->repository->pathIsNotIgnored($this->variables['notIgnoredPath']));
     }
