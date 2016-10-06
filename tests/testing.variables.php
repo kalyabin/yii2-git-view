@@ -8,6 +8,11 @@ return [
     'repositoryUrl' => 'https://kalyabin@bitbucket.org/kalyabin/yii2-git-view-testing.git',
     'repositoryPath' => __DIR__ . '/repo/testing-repo',
 
+    // type all branches of repository
+    'branches' => [
+        'master', 'branch1', 'branch2',
+    ],
+
     // variables for GitWrapper tests
     'wrapper' => [
         'availCmd' => 'git',
@@ -29,6 +34,14 @@ return [
         'pathHistory' => 'testing.txt',
         'ignoredPath' => 'ignored.txt',
         'notIgnoredPath' => 'contributors.txt',
+        'branches' => [
+            'master', 'branch1', 'branch2',
+        ],
+        // type key as branch and value as commit id, wich branch contains
+        'branchHistory' => [
+            'branch2' => '062e3c143c5966a39af1fdc927c62e9a21c0093a',
+            'branch1' => '73534852d7afb64300d4a85951c4f095e9b35968',
+        ],
     ],
 
     // variables for Commit tests

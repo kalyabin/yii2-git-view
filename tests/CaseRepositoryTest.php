@@ -88,6 +88,7 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
         $branches = $this->repository->getBranches();
         $this->assertNotEmpty($branches);
         $this->assertContainsOnlyInstancesOf(Branch::className(), $branches);
+        $this->assertCount(count($this->variables['branches']), $branches);
 
         // check if current branch exists
         $currentBranchExists = false;
@@ -95,8 +96,9 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
             /* @var $branch Branch */
             if ($branch->getIsCurrent()) {
                 $currentBranchExists = true;
-                break;
             }
+            // check branch identifier
+            $this->assertContains($branch->getId(), $this->variables['branches']);
         }
 
         $this->assertTrue($currentBranchExists);
@@ -143,6 +145,49 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
         }
 
         return $history;
+    }
+
+    /**
+     * Test branch history and all branches history
+     */
+    public function testBranchHistory()
+    {
+        // test commits for specified branch
+        foreach ($this->variables['branchHistory'] as $branch => $commitId) {
+            $commitsInOtherBranches = [];
+            foreach ($this->variables['branchHistory'] as $otherBranch => $otherCommitId) {
+                if ($otherBranch != $branch) {
+                    $commitsInOtherBranches[] = $otherCommitId;
+                }
+            }
+            $this->assertNotEmpty($commitsInOtherBranches);
+            $history = $this->repository->getHistory(1000, 0, null, $branch);
+            $this->assertNotEmpty($history);
+            $this->assertContainsOnlyInstancesOf(Commit::className(), $history);
+
+            $hasCommit = false;
+            foreach ($history as $commit) {
+                if ($commit->getId() == $commitId) {
+                    $hasCommit = true;
+                }
+                $this->assertNotContains($commit->getId(), $commitsInOtherBranches);
+            }
+            $this->assertTrue($hasCommit, "Branch $branch has no commit with: $commitId\n");
+        }
+
+        // test commits for all branches
+        $commitsForAllBranches = array_flip($this->variables['branchHistory']);
+        $history = $this->repository->getHistory(1000, 0, null, null);
+        $this->assertNotEmpty($history);
+        $this->assertContainsOnlyInstancesOf(Commit::className(), $history);
+        foreach ($history as $commit) {
+            if (isset($commitsForAllBranches[$commit->getId()])) {
+                unset ($commitsForAllBranches[$commit->getId()]);
+            } elseif (empty($commitsForAllBranches)) {
+                break;
+            }
+        }
+        $this->assertEmpty($commitsForAllBranches, "Not all branches in all branches history: " . print_r($commitsForAllBranches, true));
     }
 
     /**

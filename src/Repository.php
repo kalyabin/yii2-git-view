@@ -178,7 +178,7 @@ class Repository extends BaseRepository
     /**
      * @inheritdoc
      */
-    public function getHistory($limit, $skip, $path = null)
+    public function getHistory($limit, $skip, $path = null, $branch = null)
     {
         $ret = [];
 
@@ -193,6 +193,13 @@ class Repository extends BaseRepository
             'log', '--format=\'' . self::LOG_FORMAT . '\'',
             '-n', $limit, '--skip' => $skip
         ];
+
+        if (is_null($branch)) {
+            $command['--branches'] = '*';
+        } else {
+            $command['--branches'] = '*' . escapeshellcmd($branch) . '*';
+        }
+
         if (!is_null($path)) {
             $command[] = '-- ' . escapeshellcmd($path);
         }
@@ -224,16 +231,28 @@ class Repository extends BaseRepository
     /**
      * @inheritdoc
      */
-    public function getGraphHistory($limit, $skip, $path = null)
+    public function getGraphHistory($limit, $skip, $path = null, $branch = null)
     {
         $ret = new Graph();
 
         $rawHistory = $this->getHistory($limit, $skip);
 
-        $result = $this->wrapper->execute([
+        $command = [
             'log', '--graph', '--format' => "format:''",
             '-n', (int) $limit, '--skip' => (int) $skip,
-        ], $this->projectPath, true);
+        ];
+
+        if (is_null($branch)) {
+            $command['--branches'] = '*';
+        } else {
+            $command['--branches'] = '*' . escapeshellcmd($branch) . '*';
+        }
+
+        if (!is_null($path)) {
+            $command[] = '-- ' . escapeshellcmd($path);
+        }
+
+        $result = $this->wrapper->execute($command, $this->projectPath, true);
 
         $cursor = 0;
         foreach ($result as $row) {
