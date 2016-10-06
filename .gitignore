@@ -2,6 +2,7 @@ vendor
 build
 
 composer.lock
+composer.phar
 
 # phpstorm project files
 .idea
