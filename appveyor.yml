@@ -5,7 +5,8 @@ platform:
   - x64
   - Any CPU
 cache:
-  - c:\tools\php -> appveyor.yml
+  - c:\tools\php
+  - %USERPROFILE%\Composer\vendor
 init:
   - SET PATH=c:\tools\php;%PATH%
   - SET PHP=1
