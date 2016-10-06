@@ -24,7 +24,7 @@ install:
   - cd %APPVEYOR_BUILD_FOLDER%
   - appveyor DownloadFile https://getcomposer.org/composer.phar
   - php composer.phar global require "fxp/composer-asset-plugin:~1.2.0"
-  - php composer.phar update --prefer-dist --no-progress
+  - php composer.phar update --prefer-source --no-progress
 before_test:
   - git --version
   - php --version
