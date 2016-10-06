@@ -11,6 +11,7 @@ init:
   - SET PATH=c:\tools\php;%PATH%
   - SET PHP=1
   - SET COMPOSER_NO_INTERACTION=1
+  - SET ANSICON=121x90 (121x90)
 install:
   - IF EXIST c:\tools\php (SET PHP=0)
   - IF %PHP%==1 cinst -y OpenSSL.Light
@@ -24,11 +25,11 @@ install:
   - IF %PHP%==1 echo extension=php_fileinfo.dll >> php.ini
   - cd %APPVEYOR_BUILD_FOLDER%
   - appveyor DownloadFile https://getcomposer.org/composer.phar
-  - php composer.phar global require "fxp/composer-asset-plugin:~1.2.0" --no-interaction
+  - php composer.phar global require "fxp/composer-asset-plugin:~1.2.0" --no-interaction  --no-progress
   - php composer.phar config -g github-oauth.github.com %GITHUB_PUBLIC_TOKEN%
-  - php composer.phar update --no-interaction --prefer-dist
+  - php composer.phar update --no-interaction --prefer-dist  --no-progress
 before_test:
   - git --version
   - php --version
 test_script:
-  - php vendor/bin/phpunit
+  - vendor/bin/phpunit
