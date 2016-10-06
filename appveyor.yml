@@ -33,4 +33,3 @@ before_test:
   - php --version
 test_script:
   - vendor/bin/phpunit
-  - type tests/repo/vcs_debug.log

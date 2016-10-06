@@ -9,11 +9,7 @@ Yii::setAlias('@tests', __DIR__);
 
 // enable debug
 define('VCS_DEBUG', true);
-define('VCS_DEBUG_FILE', __DIR__ . '/repo/vcs_debug.log');
-
-if (is_file(VCS_DEBUG_FILE)) {
-    unlink(VCS_DEBUG_FILE);
-}
+define('VCS_DEBUG_FILE', 'php://output');
 
 require __DIR__ . '/create_repository.php';
 
