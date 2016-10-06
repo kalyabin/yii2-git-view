@@ -6,7 +6,7 @@ platform:
   - Any CPU
 cache:
   - c:\tools\php
-  - %USERPROFILE%\Composer\vendor
+  - c:\Users\appveyor\AppData\Roaming\Composer\vendor
 init:
   - SET PATH=c:\tools\php;%PATH%
   - SET PHP=1
