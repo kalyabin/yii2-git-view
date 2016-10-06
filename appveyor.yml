@@ -9,6 +9,7 @@ cache:
 init:
   - SET PATH=c:\tools\php;%PATH%
   - SET PHP=1
+  - SET COMPOSER_NO_INTERACTION=1
 install:
   - IF EXIST c:\tools\php (SET PHP=0)
   - IF %PHP%==1 cinst -y OpenSSL.Light
