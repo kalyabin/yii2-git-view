@@ -85,7 +85,7 @@ class Repository extends BaseRepository
     public function getCommit($id)
     {
         $result = $this->wrapper->execute([
-            'show', '--quiet', escapeshellcmd($id), '--pretty=format:\'' . self::LOG_FORMAT . '\'',
+            'show', '--quiet', escapeshellcmd($id), '--pretty=format:"' . self::LOG_FORMAT . '"',
         ], $this->projectPath, true);
         list ($id, $parent, $contributorName, $contributorEmail, $date, $message) = $result;
         $commit = new Commit($this, [
@@ -131,7 +131,7 @@ class Repository extends BaseRepository
      */
     public function getDiff()
     {
-        $command = ['show', "--format=''"];
+        $command = ['show', '--format' => '""'];
 
         $type = func_num_args() >= 1 ? func_get_arg(0) : null;
         $arg1 = func_num_args() >= 2 ? func_get_arg(1) : null;
@@ -169,7 +169,7 @@ class Repository extends BaseRepository
         if (empty($result)) {
             // force git diff command
             $command[0] = 'diff';
-            $command[1] = "--pretty=format:''";
+            $command[1] = '--pretty=format:""';
             $result = $this->wrapper->execute($command, $this->projectPath, true);
         }
         return $result;
@@ -190,7 +190,7 @@ class Repository extends BaseRepository
         }
 
         $command = [
-            'log', '--format=\'' . self::LOG_FORMAT . '\'',
+            'log', '--format="' . self::LOG_FORMAT . '"',
             '-n', $limit, '--skip' => $skip
         ];
 
@@ -238,7 +238,7 @@ class Repository extends BaseRepository
         $rawHistory = $this->getHistory($limit, $skip);
 
         $command = [
-            'log', '--graph', '--format' => "format:''",
+            'log', '--graph', '--format' => 'format:""',
             '-n', (int) $limit, '--skip' => (int) $skip,
         ];
 
