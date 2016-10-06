@@ -21,4 +21,4 @@ install:
   - travis_retry composer update --prefer-dist --no-interaction  --no-progress
   - git --version
 script:
-  - vendor/bin/phpunit
+  - vendor/bin/phpunit --debug

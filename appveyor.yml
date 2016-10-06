@@ -32,4 +32,4 @@ before_test:
   - git --version
   - php --version
 test_script:
-  - vendor/bin/phpunit
+  - vendor/bin/phpunit --debug

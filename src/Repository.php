@@ -85,7 +85,7 @@ class Repository extends BaseRepository
     public function getCommit($id)
     {
         $result = $this->wrapper->execute([
-            'show', '--quiet', $id, '--pretty=format:\'' . self::LOG_FORMAT . '\'',
+            'show', '--quiet', escapeshellcmd($id), '--pretty=format:\'' . self::LOG_FORMAT . '\'',
         ], $this->projectPath, true);
         list ($id, $parent, $contributorName, $contributorEmail, $date, $message) = $result;
         $commit = new Commit($this, [
@@ -143,7 +143,7 @@ class Repository extends BaseRepository
         }
         else if ($type == self::DIFF_COMPARE && $this->wrapper->checkIsSha1($arg1) && $this->wrapper->checkIsSha1($arg2)) {
             // commits compare requires second param a commit sha1 and third param too
-            $command[] = escapeshellcmd($arg1 . '..' . $arg2);
+            $command[] = escapeshellcmd($arg1) . '..' . escapeshellcmd($arg2);
         }
         else if ($type == self::DIFF_PATH && is_string($arg1)) {
             // path diff requires second param like a string
