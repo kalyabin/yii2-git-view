@@ -11,6 +11,8 @@ init:
   - SET PHP=1
 install:
   - IF EXIST c:\tools\php (SET PHP=0)
+  - IF %PHP%==1 cinst -y OpenSSL.Light
+  - SET PATH=C:\Program Files\OpenSSL;%PATH%
   - cinst -y curl
   - SET PATH=C:\Program Files\curl;%PATH%
   - IF %PHP%==1 cinst -y php
@@ -20,6 +22,7 @@ install:
   - IF %PHP%==1 echo date.timezone="UTC" >> php.ini
   - IF %PHP%==1 echo extension=php_mbstring.dll >> php.ini
   - IF %PHP%==1 echo extension=php_curl.dll >> php.ini
+  - IF %PHP%==1 echo extension=php_openssl.dll >> php.ini
   - SET PATH=C:\tools\php;%PATH%
   - cd %APPVEYOR_BUILD_FOLDER%
   - appveyor DownloadFile https://getcomposer.org/composer.phar
