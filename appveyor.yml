@@ -25,9 +25,9 @@ install:
   - IF %PHP%==1 echo extension=php_fileinfo.dll >> php.ini
   - cd %APPVEYOR_BUILD_FOLDER%
   - appveyor DownloadFile https://getcomposer.org/composer.phar
-  - php composer.phar global require "fxp/composer-asset-plugin:~1.2.0" --no-interaction  --no-progress
   - php composer.phar config -g github-oauth.github.com %GITHUB_PUBLIC_TOKEN%
-  - php composer.phar update --no-interaction --prefer-dist  --no-progress
+  - php composer.phar global require "fxp/composer-asset-plugin:~1.2.0" --no-interaction  --no-progress --quiet
+  - php composer.phar update --no-interaction --prefer-dist  --no-progress --quiet
 before_test:
   - git --version
   - php --version
