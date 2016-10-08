@@ -19,6 +19,7 @@ install:
   - travis_retry composer global require "fxp/composer-asset-plugin:^1.2.0" --no-interaction  --no-progress
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - travis_retry composer update --prefer-dist --no-interaction  --no-progress
+  - php tests/create_repository.php
   - git --version
 script:
   - vendor/bin/phpunit --debug

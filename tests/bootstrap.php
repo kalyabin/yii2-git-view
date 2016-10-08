@@ -11,8 +11,6 @@ Yii::setAlias('@tests', __DIR__);
 define('VCS_DEBUG', true);
 define('VCS_DEBUG_FILE', 'php://output');
 
-require __DIR__ . '/create_repository.php';
-
 new \yii\console\Application([
     'id' => 'unit',
     'basePath' => __DIR__,

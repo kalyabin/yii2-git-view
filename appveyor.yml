@@ -29,6 +29,7 @@ install:
   - php composer.phar global require "fxp/composer-asset-plugin:~1.2.0" --no-interaction  --no-progress --quiet
   - php composer.phar update --no-interaction --prefer-dist  --no-progress --quiet
 before_test:
+  - php tests/create_repository.php
   - git --version
   - php --version
 test_script:
