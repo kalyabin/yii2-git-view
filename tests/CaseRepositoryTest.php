@@ -48,7 +48,7 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
     {
         $fileList = $this->repository->getFilesList();
         $this->assertNotEmpty($fileList);
-        $this->assertContainsOnlyInstancesOf(File::className(), $fileList);
+        $this->assertContainsOnlyInstancesOf(File::class, $fileList);
     }
 
     /**
@@ -87,7 +87,7 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
     {
         $branches = $this->repository->getBranches();
         $this->assertNotEmpty($branches);
-        $this->assertContainsOnlyInstancesOf(Branch::className(), $branches);
+        $this->assertContainsOnlyInstancesOf(Branch::class, $branches);
         $this->assertCount(count($this->variables['branches']), $branches);
 
         // check if current branch exists
@@ -113,7 +113,7 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
     {
         $history = $this->repository->getHistory(10, 5);
         $this->assertNotEmpty($history);
-        $this->assertContainsOnlyInstancesOf(Commit::className(), $history);
+        $this->assertContainsOnlyInstancesOf(Commit::class, $history);
         $this->assertCount(10, $history);
 
         return $history;
@@ -126,7 +126,7 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
     {
         $history = $this->repository->getHistory(2, 0, $this->variables['pathHistory']);
         $this->assertNotEmpty($history);
-        $this->assertContainsOnlyInstancesOf(Commit::className(), $history);
+        $this->assertContainsOnlyInstancesOf(Commit::class, $history);
         $this->assertCount(2, $history);
 
         foreach ($history as $commit) {
@@ -136,7 +136,7 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
             $hasCurrentFile = false;
             foreach ($commit->getChangedFiles() as $file) {
                 /* @var $file File */
-                $this->assertInstanceOf(File::className(), $file);
+                $this->assertInstanceOf(File::class, $file);
                 if ($this->variables['pathHistory'] === $file->getPathname()) {
                     $hasCurrentFile = true;
                 }
@@ -163,7 +163,7 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
             $this->assertNotEmpty($commitsInOtherBranches);
             $history = $this->repository->getHistory(1000, 0, null, $branch);
             $this->assertNotEmpty($history);
-            $this->assertContainsOnlyInstancesOf(Commit::className(), $history);
+            $this->assertContainsOnlyInstancesOf(Commit::class, $history);
 
             $hasCommit = false;
             foreach ($history as $commit) {
@@ -179,7 +179,7 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
         $commitsForAllBranches = array_flip($this->variables['branchHistory']);
         $history = $this->repository->getHistory(1000, 0, null, null);
         $this->assertNotEmpty($history);
-        $this->assertContainsOnlyInstancesOf(Commit::className(), $history);
+        $this->assertContainsOnlyInstancesOf(Commit::class, $history);
         foreach ($history as $commit) {
             if (isset($commitsForAllBranches[$commit->getId()])) {
                 unset ($commitsForAllBranches[$commit->getId()]);
@@ -328,14 +328,14 @@ class CaseRepositoryTest extends PHPUnit_Framework_TestCase
     public function testGraphHistory()
     {
         $graph = $this->repository->getGraphHistory(10, 1);
-        $this->assertInstanceOf(Graph::className(), $graph);
-        $this->assertContainsOnlyInstancesOf(Commit::className(), $graph->getCommits());
+        $this->assertInstanceOf(Graph::class, $graph);
+        $this->assertContainsOnlyInstancesOf(Commit::class, $graph->getCommits());
         $this->assertEquals(10, count($graph->getCommits()));
         $this->assertGreaterThanOrEqual(0, $graph->getLevels());
         $this->assertLessThan(9, $graph->getLevels());
         foreach ($graph->getCommits() as $commit) {
             /* @var $commit Commit */
-            $this->assertInstanceOf(Commit::className(), $commit);
+            $this->assertInstanceOf(Commit::class, $commit);
             $this->assertGreaterThanOrEqual(0, $commit->graphLevel);
             $this->assertLessThanOrEqual($graph->getLevels(), $commit->graphLevel);
         }

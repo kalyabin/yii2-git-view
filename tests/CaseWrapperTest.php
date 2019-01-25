@@ -61,7 +61,7 @@ class CaseWrapperTest extends PHPUnit_Framework_TestCase
         $wrapper = new GitWrapper([
             'cmd' => $cmd,
         ]);
-        $this->assertInstanceOf(GitWrapper::className(), $wrapper);
+        $this->assertInstanceOf(GitWrapper::class, $wrapper);
         $this->assertEquals($cmd, $wrapper->getCmd());
 
         // set variables without constructor
@@ -147,7 +147,7 @@ class CaseWrapperTest extends PHPUnit_Framework_TestCase
 
         $wrapper->setCmd($cmd);
         $repository = $wrapper->getRepository($repoPath);
-        $this->assertInstanceOf(Repository::className(), $repository);
+        $this->assertInstanceOf(Repository::class, $repository);
     }
 
     /**

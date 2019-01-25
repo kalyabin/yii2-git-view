@@ -60,11 +60,11 @@ class CaseCommitTest extends PHPUnit_Framework_TestCase
             $this->assertTrue($wrapper->checkIsSha1($parentId));
         }
         $this->assertNotEmpty($commit->getChangedFiles());
-        $this->assertContainsOnly(File::className(), $commit->getChangedFiles());
+        $this->assertContainsOnly(File::class, $commit->getChangedFiles());
         $lastFilePath = null;
         $lastFileStatus = null;
         foreach ($commit->getChangedFiles() as $item) {
-            $this->assertInstanceOf(File::className(), $item);
+            $this->assertInstanceOf(File::class, $item);
             $this->assertInternalType('string', $item->getStatus());
             $this->assertInternalType('string', $item->getPath());
             $this->assertInternalType('string', $item->getPathname());
@@ -74,7 +74,7 @@ class CaseCommitTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($commit->getFileStatus($lastFilePath), $lastFileStatus);
         $lastFile = $commit->getFileByPath($lastFilePath);
-        $this->assertInstanceOf(File::className(), $lastFile);
+        $this->assertInstanceOf(File::class, $lastFile);
         $this->assertEquals($lastFilePath, $lastFile->getPathname());
         $this->assertEquals($lastFileStatus, $lastFile->getStatus());
 
@@ -91,7 +91,7 @@ class CaseCommitTest extends PHPUnit_Framework_TestCase
     {
         $diffs = $commit->getDiff();
         $this->assertNotEmpty($diffs);
-        $this->assertContainsOnlyInstancesOf(Diff::className(), $diffs);
+        $this->assertContainsOnlyInstancesOf(Diff::class, $diffs);
         foreach ($diffs as $diff) {
             /* @var $diff Diff */
             $this->assertInternalType('string', $diff->getDescription());
